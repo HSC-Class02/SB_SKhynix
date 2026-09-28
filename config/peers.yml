@@ -1,0 +1,6 @@
+peers:
+  - {name: "삼성전자", ticker: "005930", type: "국내 상장", note: "메모리·시스템반도체 등"}
+  - {name: "DB하이텍", ticker: "000990", type: "국내 상장", note: "파운드리"}
+  - {name: "한미반도체", ticker: "042700", type: "국내 상장", note: "반도체 후공정 장비"}
+  - {name: "LX세미콘", ticker: "108320", type: "국내 상장", note: "반도체 설계"}
+  - {name: "SK실트론", ticker: "", type: "국내 기업", note: "반도체 웨이퍼"}

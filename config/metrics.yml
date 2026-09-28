@@ -1,0 +1,40 @@
+metrics:
+  revenue:
+    label_ko: "매출액"
+    aliases: ["매출액", "수익(매출액)", "Revenue", "Sales"]
+  operating_income:
+    label_ko: "영업이익"
+    aliases: ["영업이익", "영업이익(손실)", "Operating income"]
+  net_income:
+    label_ko: "당기순이익"
+    aliases: ["당기순이익", "당기순이익(손실)", "Profit (loss)", "당기순손익"]
+  total_assets:
+    label_ko: "총자산"
+    aliases: ["자산총계", "총자산", "Total assets"]
+  total_liabilities:
+    label_ko: "총부채"
+    aliases: ["부채총계", "총부채", "Total liabilities"]
+  total_equity:
+    label_ko: "총자본"
+    aliases: ["자본총계", "총자본", "Total equity"]
+  current_assets:
+    label_ko: "유동자산"
+    aliases: ["유동자산", "Current assets"]
+  current_liabilities:
+    label_ko: "유동부채"
+    aliases: ["유동부채", "Current liabilities"]
+  cash:
+    label_ko: "현금및현금성자산"
+    aliases: ["현금및현금성자산", "Cash and cash equivalents"]
+  ppe:
+    label_ko: "유형자산"
+    aliases: ["유형자산", "Property, plant and equipment"]
+  receivables:
+    label_ko: "매출채권"
+    aliases: ["매출채권", "Trade receivables", "매출채권및기타채권"]
+  inventory:
+    label_ko: "재고자산"
+    aliases: ["재고자산", "Inventories"]
+  cfo:
+    label_ko: "영업활동현금흐름"
+    aliases: ["영업활동으로 인한 현금흐름", "영업활동현금흐름", "Net cash provided by operating activities"]

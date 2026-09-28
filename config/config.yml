@@ -1,0 +1,17 @@
+company:
+  name: "SK hynix"
+  corp_code: "00164779"
+  stock_code: "000660"
+  start_year: 2010
+  end_year: null
+reports:
+  annual: "11011"
+  half_year: "11012"
+  quarterly_q1: "11013"
+  quarterly_q3: "11014"
+financial_statement:
+  fs_div: "CFS"
+  fallback_fs_div: "OFS"
+storage:
+  save_raw_filings: true
+  data_dir: "data"
