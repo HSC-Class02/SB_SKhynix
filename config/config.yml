@@ -2,7 +2,8 @@ company:
   name: "SK hynix"
   corp_code: "00164779"
   stock_code: "000660"
-  start_year: 2010\n  legacy_end_year: 2014
+  start_year: 2010
+  legacy_end_year: 2014
   end_year: null
 reports:
   annual: "11011"
