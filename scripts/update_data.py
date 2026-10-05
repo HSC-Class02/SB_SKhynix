@@ -16,9 +16,16 @@ ROOT = Path(__file__).resolve().parents[1]
 CFG = yaml.safe_load((ROOT / "config/config.yml").read_text(encoding="utf-8"))
 METRICS = yaml.safe_load((ROOT / "config/metrics.yml").read_text(encoding="utf-8"))["metrics"]
 
-KEY = os.environ.get("OPENDART_API_KEY", "").strip()
+KEY = (
+    os.environ.get("OPENDART_API_KEY", "").strip()
+    or os.environ.get("DART_API_KEY", "").strip()
+)
 if not KEY:
-    raise SystemExit("OPENDART_API_KEY secret is required.")
+    raise SystemExit(
+        "DART API key is missing. Set repository secret OPENDART_API_KEY "
+        "(recommended) or DART_API_KEY."
+    )
+print(f"DART API key detected (length={len(KEY)})")
 
 API = "https://opendart.fss.or.kr/api"
 CORP = str(CFG["company"]["corp_code"])
