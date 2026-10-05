@@ -1,0 +1,112 @@
+[
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "사업보고서 (2010.12)",
+    "rcept_no": "20110331003040",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20110331",
+    "rm": "연"
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "반기보고서 (2010.06)",
+    "rcept_no": "20100813000578",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20100813",
+    "rm": ""
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "사업보고서 (2011.12)",
+    "rcept_no": "20120330001870",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20120330",
+    "rm": "정연"
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "[기재정정]반기보고서 (2011.06)",
+    "rcept_no": "20111123000206",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20111123",
+    "rm": ""
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "사업보고서 (2012.12)",
+    "rcept_no": "20130329002163",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20130329",
+    "rm": "정연"
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "반기보고서 (2012.06)",
+    "rcept_no": "20120817000001",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20120817",
+    "rm": ""
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "[첨부추가]사업보고서 (2013.12)",
+    "rcept_no": "20140331002980",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20140331",
+    "rm": "연"
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "반기보고서 (2013.06)",
+    "rcept_no": "20130814001050",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20130814",
+    "rm": ""
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "사업보고서 (2014.12)",
+    "rcept_no": "20150331004519",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20150331",
+    "rm": "정연"
+  },
+  {
+    "corp_code": "00164779",
+    "corp_name": "SK하이닉스",
+    "stock_code": "000660",
+    "corp_cls": "Y",
+    "report_nm": "반기보고서 (2014.06)",
+    "rcept_no": "20140814001611",
+    "flr_nm": "SK하이닉스",
+    "rcept_dt": "20140814",
+    "rm": ""
+  }
+]
