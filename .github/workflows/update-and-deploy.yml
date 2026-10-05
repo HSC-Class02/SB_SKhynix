@@ -46,6 +46,7 @@ jobs:
       - name: Update DART data
         env:
           OPENDART_API_KEY: ${{ secrets.OPENDART_API_KEY }}
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: python scripts/update_data.py
 
       - name: Verify generated data
