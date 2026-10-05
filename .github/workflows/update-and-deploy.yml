@@ -30,21 +30,60 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Validate configuration
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          p = Path("config/config.yml")
+          with p.open(encoding="utf-8") as f:
+              cfg = yaml.safe_load(f)
+          assert cfg["company"]["start_year"] == 2010
+          assert cfg["company"]["corp_code"] == "00164779"
+          print("Configuration OK")
+          PY
+
       - name: Update DART data
         env:
           OPENDART_API_KEY: ${{ secrets.OPENDART_API_KEY }}
         run: python scripts/update_data.py
 
+      - name: Verify generated data
+        run: |
+          test -s data/financials.csv
+          test -s data/financials.json
+          python - <<'PY'
+          import pandas as pd
+          df = pd.read_csv("data/financials.csv")
+          print(f"rows={len(df)}")
+          print(f"years={df['year'].min()}-{df['year'].max()}")
+          print(df.groupby("report_type").size().to_string())
+          assert len(df) > 0
+          assert df["year"].notna().all()
+          PY
+
       - name: Build dashboard
         run: python scripts/build_dashboard.py
+
+      - name: Verify dashboard
+        run: test -s docs/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
 
       - name: Commit generated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data docs
-          git diff --cached --quiet || git commit -m "chore: update DART data and dashboard"
-          git push
+          if git diff --cached --quiet; then
+            echo "No generated data changes to commit."
+          else
+            git commit -m "chore: update DART data and dashboard"
+            git push
+          fi
 
   deploy:
     needs: update
@@ -53,14 +92,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout updated repository
-        uses: actions/checkout@v4
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
