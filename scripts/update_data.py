@@ -297,6 +297,16 @@ for year in range(START, min(LEGACY_END, END) + 1):
 df = pd.DataFrame(records)
 
 if not df.empty:
+    # Do not publish placeholder rows created when OpenDART has not yet published
+    # a report (for example, a future Q3 report), or rows with no usable figures.
+    primary_metrics = ["revenue", "operating_income", "net_income", "total_assets",
+                       "total_liabilities", "total_equity"]
+    existing_primary = [c for c in primary_metrics if c in df.columns]
+    df = df.loc[df[existing_primary].notna().any(axis=1)].copy()
+    # A financial row without any core amount is not useful and can hide API failures.
+    if df.empty:
+        raise RuntimeError("OpenDART returned no usable financial figures; refusing to overwrite the dashboard.")
+
     df = (
         df.sort_values(["year", "report_type", "quarter", "rcept_dt"])
         .drop_duplicates(["year", "report_type", "quarter"], keep="last")
@@ -315,6 +325,18 @@ if not df.empty:
     df["asset_turnover"] = [div(a, b) for a, b in zip(df.revenue, df.total_assets)]
 else:
     df = pd.DataFrame(columns=["year", "report_type", "quarter"])
+
+# Quality gate: catch missing or implausible extraction before publishing.
+annual = df[(df["report_type"] == "annual") & (df["year"] >= 2015)]
+if not annual.empty:
+    recent = annual[annual["year"] >= max(2015, END - 10)]
+    if len(recent) and recent["revenue"].notna().mean() < 0.80:
+        raise RuntimeError("Data quality check failed: too many annual revenue values are missing.")
+    if len(recent) and recent["total_assets"].notna().mean() < 0.80:
+        raise RuntimeError("Data quality check failed: too many annual total-asset values are missing.")
+for col in ("operating_margin", "net_margin", "roe", "roa", "debt_ratio", "current_ratio", "asset_turnover"):
+    if col in df and not pd.Series(df[col]).dropna().map(lambda x: abs(float(x)) < 1e6).all():
+        raise RuntimeError(f"Data quality check failed: implausible values detected in {col}.")
 
 df.to_csv(DATA / "financials.csv", index=False, encoding="utf-8-sig")
 df.to_json(DATA / "financials.json", orient="records", force_ascii=False, indent=2)
