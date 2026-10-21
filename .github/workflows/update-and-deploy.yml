@@ -59,8 +59,16 @@ jobs:
           print(f"rows={len(df)}")
           print(f"years={df['year'].min()}-{df['year'].max()}")
           print(df.groupby("report_type").size().to_string())
-          assert len(df) > 0
-          assert df["year"].notna().all()
+          assert len(df) > 0, "No financial rows generated"
+          assert df["year"].notna().all(), "Rows with missing year found"
+          core = ["revenue", "operating_income", "net_income", "total_assets", "total_liabilities", "total_equity"]
+          available = [c for c in core if c in df.columns]
+          assert df[available].notna().any(axis=1).all(), "Empty placeholder report found"
+          annual = df[(df["report_type"] == "annual") & (df["year"] >= 2015)]
+          recent = annual[annual["year"] >= max(2015, int(df["year"].max()) - 10)]
+          if len(recent):
+              assert recent["revenue"].notna().mean() >= 0.80, "Annual revenue extraction coverage is below 80%"
+              assert recent["total_assets"].notna().mean() >= 0.80, "Annual asset extraction coverage is below 80%"
           PY
 
       - name: Build dashboard
