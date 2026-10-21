@@ -80,18 +80,21 @@ def num(v):
 
 
 def find_row(rows, metric):
+    # Prefer exact account-name matches and rows that actually contain a value.
     aliases = [norm(a) for a in METRICS[metric]["aliases"]]
-    candidates = []
+    exact = []
+    partial = []
     for row in rows:
         label = norm(row.get("account_nm", ""))
         if not label:
             continue
-        for alias in aliases:
-            if label == alias:
-                return row
-            if alias and (alias in label or label in alias):
-                candidates.append(row)
-    return candidates[0] if candidates else None
+        has_value = any(num(row.get(k)) is not None for k in ("thstrm_amount", "thstrm_add_amount"))
+        if label in aliases:
+            exact.append((not has_value, row))
+        elif any(a and (label.startswith(a) or a in label) for a in aliases):
+            partial.append((not has_value, row))
+    candidates = exact or partial
+    return sorted(candidates, key=lambda x: x[0])[0][1] if candidates else None
 
 
 def value_from_rows(rows, metric):
@@ -175,6 +178,11 @@ def choose_legacy_filings(year):
 
 
 def legacy_extract(filing):
+    """Extract legacy statements by table row, not by scanning arbitrary nearby text.
+
+    Older DART documents often report amounts in million won. We only accept
+    numeric cells from the same table row as the matched account label.
+    """
     result = {metric: None for metric in METRICS}
     rcp_no = filing.get("rcept_no")
     if not rcp_no:
@@ -185,37 +193,54 @@ def legacy_extract(filing):
             (RAW / f"{rcp_no}.zip").write_bytes(content)
 
         with zipfile.ZipFile(io.BytesIO(content)) as archive:
-            parts = []
+            documents = []
             for name in archive.namelist():
                 if name.lower().endswith((".xml", ".html", ".htm")):
                     try:
-                        parts.append(
-                            BeautifulSoup(
-                                archive.read(name), "lxml-xml"
-                            ).get_text(" ", strip=True)
-                        )
+                        documents.append(archive.read(name))
                     except Exception:
-                        pass
-            text = " ".join(parts)
+                        continue
+        all_text = " ".join(BeautifulSoup(part, "lxml").get_text(" ", strip=True) for part in documents)
+        unit_text = norm(all_text[:20000])
+        scale = 1.0
+        if "백만원" in all_text[:20000]:
+            scale = 1_000_000.0
+        elif "천원" in all_text[:20000]:
+            scale = 1_000.0
 
-        for metric, spec in METRICS.items():
-            for alias in spec["aliases"]:
-                match = re.search(re.escape(str(alias)), text, flags=re.IGNORECASE)
-                if not match:
+        aliases = {metric: [norm(a) for a in spec["aliases"]] for metric, spec in METRICS.items()}
+        found = {metric: [] for metric in METRICS}
+        for part in documents:
+            soup = BeautifulSoup(part, "lxml")
+            for tr in soup.find_all("tr"):
+                cells = [cell.get_text(" ", strip=True) for cell in tr.find_all(["th", "td"])]
+                if len(cells) < 2:
                     continue
-                window = text[match.end():match.end() + 350]
-                numbers = re.findall(r"(?<![A-Za-z])\(?-?\d[\d,]*\)?", window)
-                for candidate in numbers:
-                    value = num(candidate)
+                label = norm(" ".join(cells[:2]))
+                matched = []
+                for metric, names in aliases.items():
+                    if any(label == a or label.startswith(a) for a in names if a):
+                        matched.append(metric)
+                if not matched:
+                    continue
+                values = []
+                for cell in cells[1:]:
+                    value = num(cell.replace(" ", ""))
                     if value is not None:
-                        result[metric] = value
-                        break
-                if result[metric] is not None:
-                    break
+                        values.append(value)
+                if not values:
+                    continue
+                # The first amount column is the current-period figure in legacy statements.
+                for metric in matched:
+                    found[metric].append(values[0] * scale)
+
+        for metric, candidates in found.items():
+            if candidates:
+                # Prefer the first table occurrence, as statement notes may repeat the same account.
+                result[metric] = candidates[0]
     except Exception as exc:
         print(f"[WARN] legacy parser {rcp_no}: {exc}")
     return result
-
 
 def make_record(year, report_type, filing=None, rows=None, fs_div=None):
     record = {
